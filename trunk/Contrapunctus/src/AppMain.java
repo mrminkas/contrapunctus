@@ -7,7 +7,10 @@ import java.util.*;
 public class AppMain {
 	public static void main(String[] args){
 		//playTommysPentatonicRandomness();
-		
+		playPentatonicRandomWalk();
+	}
+	
+	static void playPentatonicRandomWalk(){
 		String[] notes = "E4 G4 A4 C D E G A C6 D6 E6".split(" ");
 		//String[] notes = "G4 A4 B4 C D E F G A B C6 D6 E6".split(" ");
 		
