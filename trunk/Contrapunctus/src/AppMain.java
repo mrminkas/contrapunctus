@@ -6,7 +6,37 @@ import java.util.*;
 
 public class AppMain {
 	public static void main(String[] args){
-		playTommysPentatonicRandomness();
+		//playTommysPentatonicRandomness();
+		
+		String[] notes = "E4 G4 A4 C D E G A C6 D6 E6".split(" ");
+		//String[] notes = "G4 A4 B4 C D E F G A B C6 D6 E6".split(" ");
+		
+		Random rand = new Random();
+		
+		StringBuilder sb = new StringBuilder("Tempo[300] V0 ");
+		int position = 3;
+		for(int i=0; i<=130; i++){
+			
+			boolean r = rand.nextBoolean();
+			if(r) position ++; else position --;
+			
+			if(position < 0) position += 2;
+			if(position > 5) position -= 2;
+			
+			if(i==0) position = 3;
+			if(i == 130 && position != 3) i -= 13;
+			
+			String nlen = "i";
+			if(i % 13 == 0){
+				nlen = "h";
+			}
+			if(i==130) nlen = "ww";
+			
+			sb.append(notes[position] + nlen + " ");
+		}
+		
+		Player player = new Player();
+		player.play(sb.toString());
 	}
 	
 	static void playTommysPentatonicRandomness(){
