@@ -1,3 +1,4 @@
+package contrapunctus;
 import org.jfugue.*;
 
 public class SoundTest {

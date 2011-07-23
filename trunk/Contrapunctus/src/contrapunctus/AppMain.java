@@ -1,13 +1,21 @@
+package contrapunctus;
 import org.jfugue.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static contrapunctus.Notes.*;
+
 public class AppMain {
 	public static void main(String[] args){
 		//playTommysPentatonicRandomness();
-		playPentatonicRandomWalk();
+		//playPentatonicRandomWalk();
+		
+		// Test some new code
+		Notes.transNote("C", MAJ_THIRD);
+		Notes.transNote("F7", -OCTAVE);
+		Notes.transNote("Eb2",MAJ_SIXTH);
 	}
 	
 	static void playPentatonicRandomWalk(){
