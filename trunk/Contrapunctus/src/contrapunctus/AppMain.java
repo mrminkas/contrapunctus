@@ -12,10 +12,14 @@ public class AppMain {
 		//playTommysPentatonicRandomness();
 		//playPentatonicRandomWalk();
 		
-		// Test some new code
-		Notes.transNote("C", MAJ_THIRD);
-		Notes.transNote("F7", -OCTAVE);
-		Notes.transNote("Eb2",MAJ_SIXTH);
+		String n = "C3";
+		StringBuffer sb = new StringBuffer("Tempo[200] ");
+		for(int i=0; i<200; i++){
+			sb.append(n + " ");
+			n = scaleNote(n, 2);
+		}
+		Player player = new Player();
+		player.play(sb.toString());
 	}
 	
 	static void playPentatonicRandomWalk(){

@@ -1,0 +1,118 @@
+package contrapunctus;
+
+// Class with tools that manipulate notes or groups of notes.
+//
+// The representation of a note is still just a string containing information about
+// the note as well as what octave the note is in (ie, C#4)
+//
+// We are assuming that everything we are dealing with is in the C key.
+public class Notes {
+	
+	// How many semitones are the intervals?
+	static final int MIN_SECOND = 1;
+	static final int MAJ_SECOND = 2;
+	static final int MIN_THIRD = 3;
+	static final int MAJ_THIRD = 4;
+	static final int FOURTH = 5;
+	static final int FIFTH = 7;
+	static final int MIN_SIXTH = 8;
+	static final int MAJ_SIXTH = 9;
+	static final int OCTAVE = 12;
+
+	// All the notes in an octave.
+	// Also have alternate string containing flats.
+	static final String[] ANA = "C C# D D# E F F# G G# A A# B".split(" ");
+	static final String[] ANB = "C Db D Eb E F Gb G Ab A Bb B".split(" ");
+	
+	
+	
+	// How hard is it to extract the note and octave from a string?
+	static String extractNoteBase(String note){
+		String bnote = Character.toString(note.charAt(0));
+		if(note.length() > 1 && (note.charAt(1) == '#' || note.charAt(1) == 'b')){
+			bnote += note.charAt(1);
+		}
+		return bnote;
+	}
+	
+	static int extractNoteOctave(String note){
+		int octave = 5;
+		if(note.length() > 1 && (note.charAt(1) == '#' || note.charAt(1) == 'b')){
+			if(note.length() > 2)
+				octave = Integer.parseInt(Character.toString(note.charAt(2)));
+		}
+		else{
+			if(note.length() > 1)
+				octave = Integer.parseInt(Character.toString(note.charAt(1)));
+		}
+		return octave;
+	}
+	
+	// Given a note (like C) and an interval (like a fifth up), we want to find
+	// the note with that interval (in this case G).
+	static String transNote(String note, int interval){
+		
+		// Parse the note string
+		String bnote = extractNoteBase(note);
+		int octave = extractNoteOctave(note);
+
+		// Extract the note value out of bnote.
+		int noteval = -1;
+		
+		for(int i=0; i<12; i++){
+			if(bnote.equals(ANA[i]) || bnote.equals(ANB[i])){
+				noteval = i;
+				break;
+			}
+		}
+		
+		if(noteval == -1) throw new RuntimeException();
+		
+		// Actually apply the interval now, by addition
+		int nnoteval = noteval + interval;
+		if(nnoteval < 0){
+			octave--;
+			nnoteval += 12;
+		}
+		if(nnoteval >= 12){
+			octave++;
+			nnoteval -= 12;
+		}
+		
+		
+		return ANA[nnoteval] + octave;
+	}
+	
+	// Move the note up or down the C major scale.
+	static String scaleNote(String note, int interval){
+		
+		// Are we going up or going down?
+		boolean up = interval > 0;
+		if(!up) interval = -interval;
+		
+		for(int i=0; i<interval; i++){
+			
+			String bn = extractNoteBase(note);
+			// Major second for some notes, else minor second.
+			
+			if(up){
+				if(bn.equals("C") || bn.equals("D") ||
+					bn.equals("F") || bn.equals("G")||
+					bn.equals("A"))
+					note = transNote(note, MAJ_SECOND);
+				else note = transNote(note, MIN_SECOND);
+			}
+			else{
+				if(bn.equals("D") || bn.equals("E") ||
+					bn.equals("G") || bn.equals("A")||
+					bn.equals("B"))
+					note = transNote(note, -MAJ_SECOND);
+				else note = transNote(note, -MIN_SECOND);
+			}
+			
+		}
+		
+		return note;
+	}
+	
+}
