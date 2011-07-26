@@ -6,18 +6,79 @@ import java.io.IOException;
 import java.util.*;
 
 import static contrapunctus.Notes.*;
+import static contrapunctus.Probability.*;
 
 public class AppMain {
+	
 	public static void main(String[] args){
+		
 		//playTommysPentatonicRandomness();
 		//playPentatonicRandomWalk();
 		
-		String n = "C3";
-		StringBuffer sb = new StringBuffer("Tempo[200] ");
-		for(int i=0; i<200; i++){
-			sb.append(n + " ");
-			n = scaleNote(n, 2);
+		String n = "C5";
+		StringBuffer sb = new StringBuffer("Tempo[160] " + n + " ");
+		
+		Random rand = new Random();
+		
+		// Very rudimentary probabilistic chain approach
+		for(int i=1; i<=11; i++){
+			
+			// Weights array. Indices 1-8 are weights for notes upward and
+			// 9-16 are weights for notes downward. Index 0 is same note.
+			double[] weights = new double[17];
+			weights[1] = 30;
+			weights[1+DOWN] = 30;
+			weights[2] = 10;
+			weights[2+DOWN] = 10;
+			weights[3] = 6;
+			weights[3+DOWN] = 6;
+			weights[4] = 5;
+			weights[4+DOWN] = 5;
+			weights[7] = 4;
+			weights[7+DOWN] = 4;
+			
+			// Avoid tritone with F-B
+			if(extractNoteBase(n).equals("F")) weights[3] = 0;
+			if(extractNoteBase(n).equals("B")) weights[3+DOWN] = 0;
+			
+			// Minor six possible when ascending
+			if(extractNoteBase(n).equals("E") ||
+				extractNoteBase(n).equals("A") ||
+				extractNoteBase(n).equals("B")) weights[5] = 6;
+			
+			normalizeWeights(weights);
+			
+			// Cumulative weights, for RNG
+			double[] cum = cumSum(weights);
+			
+			String nn = n; // next note
+			
+			// Generate the next note based on the above probabilities
+			boolean found_flag = false;
+			double r = rand.nextDouble();
+			if(r < cum[0]) {nn = n; found_flag = true;}
+			for(int k=1; k<=8; k++){
+				if(r < cum[k]){
+					nn = scaleNote(n,k);
+					found_flag = true;
+					break;
+				}
+			}
+			if(!found_flag)
+			for(int k=1; k<=8; k++){
+				if(r < cum[k+DOWN]){
+					nn = scaleNote(n,-k);
+					found_flag = true;
+					break;
+				}
+			}
+			
+			n = nn;
+			sb.append(nn + " ");
 		}
+		sb.append("C5ww");
+		
+		System.out.println(sb.toString());
 		Player player = new Player();
 		player.play(sb.toString());
 	}
