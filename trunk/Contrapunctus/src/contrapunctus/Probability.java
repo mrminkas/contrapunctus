@@ -9,7 +9,7 @@ public class Probability {
 	 * probability of staying on the same note. The values should always add up
 	 * to one.
 	 */
-
+	
 	// Add this integer to the weights array to indicate a move downward.
 	static final int DOWN = 8;
 	
