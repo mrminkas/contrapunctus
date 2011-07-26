@@ -1,5 +1,6 @@
 package contrapunctus;
 
+import javax.management.RuntimeErrorException;
 // Class with tools that manipulate notes or groups of notes.
 //
 // The representation of a note is still just a string containing information about
@@ -120,11 +121,26 @@ public class Notes {
 		return 12*(extractNoteOctave(note2) - extractNoteOctave(note1))
 			+ extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
 	}
-	/* Unfinished, will do tomorrow
-	static double interval(String note1, String note2){
-		int oct = extractNoteOctave(note2) - extractNoteOctave(note1);
-		int semi = extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
-
-		return 8*oct+semi/2.;
-	}*/
+	
+	static int interval(String note1, String note2){
+		int dist = noteDistance(note1, note2);
+		switch (dist){
+			case 0: return 0;
+			case 1: case 2: return 1;
+			case 3: case 4: return 2;
+			case 5: return 3;
+			case 6: case 7: return 4;
+			case 8: case 9: return 5;
+			case 10: case 11: return 6;
+			case 12: return 7;
+			case -1: case -2: return -1;
+			case -3: case -4: return -2;
+			case -5: return -3;
+			case -6: case -7: return -4;
+			case -8: case -9: return -5;
+			case -10: case -11: return -6;
+			case -12: return -7;
+			default: throw new RuntimeException();
+		}
+	}
 }
