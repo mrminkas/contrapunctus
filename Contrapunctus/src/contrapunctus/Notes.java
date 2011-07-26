@@ -7,7 +7,6 @@ package contrapunctus;
 //
 // We are assuming that everything we are dealing with is in the C key.
 public class Notes {
-	
 	// How many semitones are the intervals?
 	static final int MIN_SECOND = 1;
 	static final int MAJ_SECOND = 2;
@@ -23,8 +22,6 @@ public class Notes {
 	// Also have alternate string containing flats.
 	static final String[] ANA = "C C# D D# E F F# G G# A A# B".split(" ");
 	static final String[] ANB = "C Db D Eb E F Gb G Ab A Bb B".split(" ");
-	
-	
 	
 	// How hard is it to extract the note and octave from a string?
 	static String extractNoteBase(String note){
@@ -48,25 +45,30 @@ public class Notes {
 		return octave;
 	}
 	
-	// Given a note (like C) and an interval (like a fifth up), we want to find
-	// the note with that interval (in this case G).
-	static String transNote(String note, int interval){
-		
-		// Parse the note string
-		String bnote = extractNoteBase(note);
-		int octave = extractNoteOctave(note);
-
-		// Extract the note value out of bnote.
+	static int extractNotePosition(String bnote){
+		// Extract the note value out of ANA or ANB.
 		int noteval = -1;
 		
 		for(int i=0; i<12; i++){
-			if(bnote.equals(ANA[i]) || bnote.equals(ANB[i])){
+			if(extractNoteBase(bnote).equals(ANA[i]) || extractNoteBase(bnote).equals(ANB[i])){
 				noteval = i;
 				break;
 			}
 		}
 		
 		if(noteval == -1) throw new RuntimeException();
+		return noteval;
+	}
+	
+	// Given a note (like C) and an interval (like a fifth up), we want to find
+	// the note with that interval (in this case G).
+	static String transNote(String note, int interval){
+		// Parse the note string
+		String bnote = extractNoteBase(note);
+		int octave = extractNoteOctave(note);
+
+		// Extract the note value out of bnote.
+		int noteval = extractNotePosition(bnote);
 		
 		// Actually apply the interval now, by addition
 		int nnoteval = noteval + interval;
@@ -78,10 +80,10 @@ public class Notes {
 			octave++;
 			nnoteval -= 12;
 		}
-		
-		
 		return ANA[nnoteval] + octave;
 	}
+	
+	
 	
 	// Move the note up or down the C major scale.
 	static String scaleNote(String note, int interval){
@@ -109,10 +111,20 @@ public class Notes {
 					note = transNote(note, -MAJ_SECOND);
 				else note = transNote(note, -MIN_SECOND);
 			}
-			
 		}
-		
 		return note;
 	}
 	
+	static int noteDistance(String note1, String note2){
+		//returns the seminotedistance between two notes, positive means move up to second note
+		return 12*(extractNoteOctave(note2) - extractNoteOctave(note1))
+			+ extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
+	}
+	/* Unfinished, will do tomorrow
+	static double interval(String note1, String note2){
+		int oct = extractNoteOctave(note2) - extractNoteOctave(note1);
+		int semi = extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
+
+		return 8*oct+semi/2.;
+	}*/
 }
