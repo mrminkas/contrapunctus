@@ -13,12 +13,10 @@ public class AppMain {
 	
 	public static void main(String[] args){
 		
-		ArrayList<String> ns = getMelody();
+		Random rand = new Random();
+		String[] ns = matchRhythm(getMelody(rand).toArray(new String[0]),rand);
 		StringBuffer sb = new StringBuffer("Tempo[200] ");
 		for(String note : ns) sb.append(note + " ");
-		
-		sb.deleteCharAt(sb.length()-1);
-		sb.append("ww");
 		
 		System.out.println(sb.toString());
 		Player player = new Player();

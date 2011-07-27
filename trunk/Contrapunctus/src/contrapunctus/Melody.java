@@ -13,11 +13,10 @@ import java.util.*;
 public class Melody {
 
 	// Generate a random melody without rhythm, starting and ending at C.
-	static ArrayList<String> getMelody(){
+	static ArrayList<String> getMelody(Random rand){
 		String n = "C5";
 		ArrayList<String> ns = new ArrayList<String>();
-		
-		Random rand = new Random();
+		ns.add(n);
 		
 		int notesMade = 0;
 		
@@ -100,5 +99,38 @@ public class Melody {
 		ns.add("C5");
 		return ns;
 	}
+	
+	static final String[] RHYTHMS = {
+		"iiiiiiii", "qqqq", "hh", "iiiiqq", "qqiiii", "qqqii", "iiqqq",
+		"hqq", "qqh", "hiiii", "iiiih"
+	};
+	
+	
+	// Given a melody, generate a rhythm for it.
+	static String[] matchRhythm(String[] notes, Random rand){
+		
+		String[] ret = new String[notes.length];
+		int p = notes.length - 1;
+		ret[p] = notes[p] + "ww";
+		p--;
+		
+		while(p >= 0){
+			String rhm = RHYTHMS[rand.nextInt(RHYTHMS.length)];
+			int str_p = 0;
+			while(p >= 0 && str_p < rhm.length()){
+				ret[p] = notes[p] + rhm.charAt(str_p);
+				str_p++;
+				p--;
+			}
+		}
+		
+		return ret;
+	}
+	
+	
+	
+	
+	
+	
 	
 }
