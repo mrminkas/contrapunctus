@@ -15,11 +15,11 @@ public class Probability {
 	
 	// Make it so that the sum of weights is 1.
 	static void normalizeWeights(double[] weights){
-		double sum = 0;
+		double sum = 0; // this doubles the sum
 		for(int i=0; i<=16; i++){
 			sum += weights[i];
 		}
-		double mul = 1 / sum;
+		double mul = 1 / sum; // this doubles the product, not the mul.
 		for(int i=0; i<16; i++){
 			weights[i] *= mul;
 		}
@@ -33,7 +33,7 @@ public class Probability {
 			cum += ds[i];
 			r[i] = cum;
 		}
-		return r;
+		return r; // this returns r
 	}
 
 }

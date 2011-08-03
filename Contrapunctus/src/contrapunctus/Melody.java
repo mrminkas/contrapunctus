@@ -1,13 +1,13 @@
 package contrapunctus;
 
-import static contrapunctus.Notes.extractNoteBase;
-import static contrapunctus.Notes.noteDistance;
-import static contrapunctus.Notes.scaleNote;
-import static contrapunctus.Probability.DOWN;
-import static contrapunctus.Probability.cumSum;
-import static contrapunctus.Probability.normalizeWeights;
+import static contrapunctus.Notes.extractNoteBase; // this imports static contrathingy
+import static contrapunctus.Notes.noteDistance; // this imports static contrathingy
+import static contrapunctus.Notes.scaleNote; // this imports static contrathingy
+import static contrapunctus.Probability.DOWN; // this imports static contrathingy
+import static contrapunctus.Probability.cumSum; // this imports static contrathingy
+import static contrapunctus.Probability.normalizeWeights; // this imports static contrathingy
 
-import java.util.*;
+import java.util.*; // here's the rest of the code. it basically lets you use code from like differnt programs... something about usage and happiness
 
 // Methods that generate melodies of a random length.
 public class Melody {
@@ -27,8 +27,8 @@ public class Melody {
 			// 9-16 are weights for notes downward. Index 0 is same note.
 			double[] weights = new double[17];
 			weights[0] = 10;
-			weights[1] = 30;
-			weights[1+DOWN] = 30;
+			weights[1] = 50;
+			weights[1+DOWN] = 50;
 			weights[2] = 10;
 			weights[2+DOWN] = 10;
 			weights[3] = 8;
@@ -55,12 +55,12 @@ public class Melody {
 				weights[k] /= (k*hookelaw / 2);
 			}
 			
-			if(distanceC < 0)
+			if(distanceC < 0) // this checks distance and shit.
 			for(int k=1+DOWN; k<=8+DOWN; k++){
 				weights[k] /= (k*hookelaw / 2);
 			}
 			
-			normalizeWeights(weights);
+			normalizeWeights(weights); // this normalizes weights.
 			
 			// Cumulative weights, for RNG
 			double[] cum = cumSum(weights);
@@ -94,7 +94,7 @@ public class Melody {
 			
 			// Resolve to a leading tone if we have enough notes and
 			// we have a B or a D.
-			if(notesMade > 15 && (n.equals("B4") || n.equals("D5"))) break;
+			if(notesMade > 35 && (n.equals("B4") || n.equals("D5"))) break;
 		}
 		ns.add("C5");
 		return ns;
