@@ -6,7 +6,7 @@ import javax.management.RuntimeErrorException;
 // The representation of a note is still just a string containing information about
 // the note as well as what octave the note is in (ie, C#4)
 //
-// We are assuming that everything we are dealing with is in the C key.
+// We are assuming that everything we are dealing with is in the C key. FUCK YEAH!!!!
 public class Notes {
 	// How many semitones are the intervals?
 	static final int MIN_SECOND = 1;
@@ -25,12 +25,12 @@ public class Notes {
 	static final String[] ANB = "C Db D Eb E F Gb G Ab A Bb B".split(" ");
 	
 	// How hard is it to extract the note and octave from a string?
-	static String extractNoteBase(String note){
+	static String extractNoteBase(String note){ // IDK.
 		String bnote = Character.toString(note.charAt(0));
 		if(note.length() > 1 && (note.charAt(1) == '#' || note.charAt(1) == 'b')){
 			bnote += note.charAt(1);
 		}
-		return bnote;
+		return bnote; // returns a bnote. maybe a base note?
 	}
 	
 	static int extractNoteOctave(String note){
@@ -43,7 +43,7 @@ public class Notes {
 			if(note.length() > 1)
 				octave = Integer.parseInt(Character.toString(note.charAt(1)));
 		}
-		return octave;
+		return octave; //returns an octave. an octave is an interval of eight. eight equals six plus two. two equals one plus one. in the category of sets, one is the terminal value. a terminal value is not a initial value. at least, not in the category of sets. penis.
 	}
 	
 	static int extractNotePosition(String bnote){
@@ -57,7 +57,7 @@ public class Notes {
 			}
 		}
 		
-		if(noteval == -1) throw new RuntimeException();
+		if(noteval == -1) throw new RuntimeException(); 
 		return noteval;
 	}
 	
@@ -105,7 +105,7 @@ public class Notes {
 					note = transNote(note, MAJ_SECOND);
 				else note = transNote(note, MIN_SECOND);
 			}
-			else{
+			else{ //or else son!!
 				if(bn.equals("D") || bn.equals("E") ||
 					bn.equals("G") || bn.equals("A")||
 					bn.equals("B"))
@@ -124,7 +124,7 @@ public class Notes {
 	
 	static int interval(String note1, String note2){
 		int dist = noteDistance(note1, note2);
-		switch (dist){
+		switch (dist){ // switches distance.
 			case 0: return 0;
 			case 1: case 2: return 1;
 			case 3: case 4: return 2;
@@ -140,7 +140,7 @@ public class Notes {
 			case -8: case -9: return -5;
 			case -10: case -11: return -6;
 			case -12: return -7;
-			default: throw new RuntimeException();
+			default: throw new RuntimeException(); // throws new runtime exception.
 		}
 	}
 }
