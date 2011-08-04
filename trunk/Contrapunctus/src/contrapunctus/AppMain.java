@@ -9,7 +9,7 @@ public class AppMain { // this is a public class
 	public static void main(String[] args) throws InterruptedException{
 		
 		// The random used throughout the program
-		Random rand = new Random(1412);
+		Random rand = new Random(/*141582*/);
 		
 		Object[] ns = matchRhythm(getMelody(rand).toArray(new String[0]),rand);
 		String[] cp = matchCounterpoint((String[])ns[0], (Integer)ns[1], rand);

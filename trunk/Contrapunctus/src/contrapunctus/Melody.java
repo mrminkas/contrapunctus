@@ -234,10 +234,95 @@ public class Melody {
 		String s_rhms = buildstr.toString();
 		
 		
-		// Right now just generate an octave down.
-		for(int n = 1; n < matches.size(); n++){
-			counterpoint.add(transNote(matches.get(n),-12) + s_rhms.charAt(n-1));
+		// Generate a counterpoint melody. The last note as well as the first notes
+		// are already determined. The only difference from here to before is that
+		// now we are generating everything backwards.
+		String n = "C4";
+		int nt;
+		
+		for(nt = 1; nt < matches.size() - 1; nt++){
+			//counterpoint.add(transNote(matches.get(nt),-12) + s_rhms.charAt(nt-1));
+			
+			// Below is code that is mostly copy and pasted from above. The major difference
+			// is we have to check until we find a note that harmonizes, or put a break.
+			
+			String nn = n; // next note
+			
+			int tries = 0;
+			while(true){
+				
+				// Weights array. Indices 1-8 are weights for notes upward and
+				// 9-16 are weights for notes downward. Index 0 is same note.
+				double[] weights = new double[17];
+				weights[0] = 10;
+				weights[1] = 50;
+				weights[1+DOWN] = 50;
+				weights[2] = 10;
+				weights[2+DOWN] = 10;
+				weights[3] = 8;
+				weights[3+DOWN] = 8;
+				weights[4] = 8;
+				weights[4+DOWN] = 8;
+				weights[7] = 4;
+				weights[7+DOWN] = 4;
+				
+				// Avoid tritone with F-B
+				if(extractNoteBase(n).equals("F")) weights[3] = 0;
+				if(extractNoteBase(n).equals("B")) weights[3+DOWN] = 0;
+				
+				// Minor six possible when ascending
+				if(extractNoteBase(n).equals("C") ||
+					extractNoteBase(n).equals("F") ||
+					extractNoteBase(n).equals("G")) weights[5] = 6;
+				
+				int distanceC = noteDistance("C5", n);
+				double hookelaw = Math.pow(1.17604743, Math.abs(distanceC));
+				
+				if(distanceC > 0)
+				for(int k=1; k<=8; k++){
+					weights[k] /= (k*hookelaw / 2);
+				}
+				
+				if(distanceC < 0) // this checks distance and shit.
+				for(int k=1+DOWN; k<=8+DOWN; k++){
+					weights[k] /= (k*hookelaw / 2);
+				}
+				
+				normalizeWeights(weights); // this normalizes weights.
+				
+				// Cumulative weights, for RNG
+				double[] cum = cumSum(weights);
+				
+				// Generate the next note based on the above probabilities
+				boolean found_flag = false;
+				double r = rand.nextDouble();
+				if(r < cum[0]) {nn = n; found_flag = true;}
+				for(int k=1; k<=8; k++){
+					if(r < cum[k]){
+						nn = scaleNote(n,k);
+						found_flag = true;
+						break;
+					}
+				}
+				if(!found_flag)
+				for(int k=1; k<=8; k++){
+					if(r < cum[k+DOWN]){
+						nn = scaleNote(n,-k);
+						found_flag = true;
+						break;
+					}
+				}
+				
+				if(canHarmonize(nn, matches.get(nt), rand)) break;
+				else tries++;
+			}
+			
+			n = nn;
+			counterpoint.add(nn + s_rhms.charAt(nt-1));
+			//if(tries > 10)
+			//	System.out.println(tries);
 		}
+		counterpoint.add("C4" + s_rhms.charAt(nt-1));
 		
 		Collections.reverse(counterpoint);
 		return counterpoint.toArray(new String[0]);
