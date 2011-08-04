@@ -1,8 +1,6 @@
 package contrapunctus;
 
-import static contrapunctus.Notes.extractNoteBase; // this imports static contrathingy
-import static contrapunctus.Notes.noteDistance; // this imports static contrathingy
-import static contrapunctus.Notes.scaleNote; // this imports static contrathingy
+import static contrapunctus.Notes.*;
 import static contrapunctus.Probability.DOWN; // this imports static contrathingy
 import static contrapunctus.Probability.cumSum; // this imports static contrathingy
 import static contrapunctus.Probability.normalizeWeights; // this imports static contrathingy
@@ -94,25 +92,29 @@ public class Melody {
 			
 			// Resolve to a leading tone if we have enough notes and
 			// we have a B or a D.
-			if(notesMade > 35 && (n.equals("B4") || n.equals("D5"))) break;
+			if(notesMade > 60 && (n.equals("B4") || n.equals("D5"))) break;
 		}
 		ns.add("C5");
 		return ns;
 	}
 	
+	// 4 2 time cuz 8 2 is just double 4 2
 	static final String[] RHYTHMS = {
-		"iiiiiiii", "qqqq", "hh", "iiiiqq", "qqiiii", "qqqii", "iiqqq",
-		"hqq", "qqh", "hiiii", "iiiih"
+		"hhhh", "ww", "whh", "hhw"
 	};
 	
 	
 	// Given a melody, generate a rhythm for it.
-	static String[] matchRhythm(String[] notes, Random rand){
+	// This method returns an array of objects, the first index being the list of note
+	// strings, and the second object being the number of bars in the song.
+	static Object[] matchRhythm(String[] notes, Random rand){
 		
 		String[] ret = new String[notes.length];
 		int p = notes.length - 1;
 		ret[p] = notes[p] + "ww";
 		p--;
+		
+		int bars = 1;
 		
 		while(p >= 0){
 			String rhm = RHYTHMS[rand.nextInt(RHYTHMS.length)];
@@ -122,15 +124,123 @@ public class Melody {
 				str_p++;
 				p--;
 			}
+			bars++;
 		}
 		
-		return ret;
+		return new Object[]{ret,bars};
 	}
 	
+	// Two methods to extract the rhythm and nonrhythm part of a note.
+	static char extractRhythm(String note){
+		return note.charAt(note.length()-1);
+	}
 	
+	static String extractNonRhythm(String note){
+		return note.substring(0, note.length()-1);
+	}
+	// // //
 	
-	
-	
-	
+	// Given an existing melody, generate reasonable-ish counterpoint!
+	static String[] matchCounterpoint(String[] melody, int len, Random rand){
+		
+		// We match the counterpoint in three separate parts.
+		// i: Generate a rhythm of the desired length
+		// ii: For each note that we have (that we don't have the tone for, only the
+		//     duration), match it up with one note that it's supposed to
+		//     harmonize with.
+		// iii: Finally, generate the tones so that they harmonize with the first
+		//      relevant note (disonnance after that is allowed).
+		// After that we will reorder to return a nice array of notes.
+		
+		
+		//Tommy has a small penis. More relevantly, generate the rhythm.
+		String[] rhm = new String[len];
+		rhm[0] = "ww";
+		for(int bars = 1; bars < len; bars++)
+			rhm[bars] = RHYTHMS[rand.nextInt(RHYTHMS.length)];
+		
+		// Keep track of the position we are at within the melody.
+		int pmelody;
+		pmelody = melody.length - 2; // Last note is already used.
+		
+		// Part two: match each counterpoint note with a harmony. Note that everything
+		// including this arraylist is structured backwards.
+		ArrayList<String> matches = new ArrayList<String>();
+		
+		// The final note of the counterpoint matches this note
+		matches.add("C5");
+		
+		// Match the notes one bar at a time.
+		for(int bar = 1; bar < len; bar++){
+			
+			// This is so confusing:
+			// ths_rhythm goes FORWARDS in time
+			// beat goes BACKWARDS in time
+			// match goes BACKWARDS
+			
+			char[] ths_rhythm = rhm[bar].toCharArray();
+			int tb_p = 0;
+			int beat = 0; // 4 2 time, so reset when this is 4.
+			
+			// Know which note is playing on each beat
+			String[] beats = new String[4];
+			while(beat < 4 && pmelody >= 0){
+				if(extractRhythm(melody[pmelody]) == 'h'){
+					beats[beat] = extractNonRhythm(melody[pmelody]);
+					beat ++;
+				}
+				if(extractRhythm(melody[pmelody]) == 'w'){
+					beats[beat] = extractNonRhythm(melody[pmelody]);
+					beats[beat+1] = extractNonRhythm(melody[pmelody]);
+					beat += 2;
+				}
+				pmelody --;
+			}
+			
+			// Match this with our given rhythm
+			//System.out.println(Arrays.toString(beats));
+			//System.out.println(Arrays.toString(ths_rhythm));
+			
+			ArrayList<String> mat_reverse = new ArrayList<String>();
+			
+			beat = 3;
+			while(beat >= 0){ // goes backwards on beat but forwards in time
+				if(beats[beat] != null) // handles start of song
+					mat_reverse.add(beats[beat]);
+				if(ths_rhythm[tb_p] == 'h'){
+					beat -= 1;
+				}
+				if(ths_rhythm[tb_p] == 'w'){
+					beat -= 2;
+				}
+				tb_p ++; // position in the counterpoint bar
+			}
+			Collections.reverse(mat_reverse);
+			matches.addAll(mat_reverse);
+			
+		}
+		
+		
+		// We have the harmony matches. Now let's generate the melody.
+		ArrayList<String> counterpoint = new ArrayList<String>();
+		counterpoint.add("C4ww");
+		
+		// Merge all the rhythms and reverse them
+		StringBuffer buildstr = new StringBuffer();
+		for(int i=1; i<len; i++){
+			//buildstr.append(rhm[i]);
+			buildstr.append(new StringBuilder(rhm[i]).reverse().toString());
+		}
+		String s_rhms = buildstr.toString();
+		
+		
+		// Right now just generate an octave down.
+		for(int n = 1; n < matches.size(); n++){
+			counterpoint.add(transNote(matches.get(n),-12) + s_rhms.charAt(n-1));
+		}
+		
+		Collections.reverse(counterpoint);
+		return counterpoint.toArray(new String[0]);
+	}
 	
 }

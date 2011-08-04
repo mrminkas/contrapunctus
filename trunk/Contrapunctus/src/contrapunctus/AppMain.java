@@ -8,18 +8,22 @@ public class AppMain { // this is a public class
 	
 	public static void main(String[] args) throws InterruptedException{
 		
-		while(true){
-			Random rand = new Random();
-			int ins = rand.nextInt(80); // this makes a random instrument sound to use while playingt the music that was previously created by this program that creates music for the instrument to play
-			ins = 0;
-			String[] ns = matchRhythm(getMelody(rand).toArray(new String[0]),rand);
-			StringBuffer sb = new StringBuffer("Tempo[150] I[" + ins + "] "); // this sets a tempo
-			for(String note : ns) sb.append(note + " ");
-			
-			System.out.println(sb.toString()); // this is a string of notes
-			Player player = new Player(); // this plays music.
-			player.play(sb.toString());
-			Thread.sleep(1000); //this calls it to sleep after a while.
-		}
+		// The random used throughout the program
+		Random rand = new Random(1412);
+		
+		Object[] ns = matchRhythm(getMelody(rand).toArray(new String[0]),rand);
+		String[] cp = matchCounterpoint((String[])ns[0], (Integer)ns[1], rand);
+		StringBuffer sb_cp = new StringBuffer("V1 ");
+		
+		StringBuffer sb_ml = new StringBuffer("Tempo[400] V0 "); // this sets a tempo
+		for(String note : (String[])ns[0]) sb_ml.append(note + " ");
+		for(String note : cp) sb_cp.append(note + " ");
+		sb_ml.append(sb_cp);
+		
+		System.out.println(sb_ml.toString()); // this is a string of notes
+		Player player = new Player(); // this plays music.
+		player.play(sb_ml.toString());
+		//Thread.sleep(1000); //this calls it to sleep after a while.
+		
 	}
 }
