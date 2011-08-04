@@ -1,10 +1,14 @@
 package contrapunctus;
 
+import java.util.Random;
+
 import javax.management.RuntimeErrorException;
 // Class with tools that manipulate notes or groups of notes.
 //
 // The representation of a note is still just a string containing information about
-// the note as well as what octave the note is in (ie, C#4)
+// the note as well as what octave the note is in (ie, C#4). Nothing here deals
+// with the duration of the note, use the method in Melody.java to separate the
+// tone from the duration.
 //
 // We are assuming that everything we are dealing with is in the C key. FUCK YEAH!!!!
 public class Notes {
@@ -122,25 +126,29 @@ public class Notes {
 			+ extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
 	}
 	
-	/*static int interval(String note1, String note2){
+	// Returns whether the two notes harmonize. Probabilistic!
+	// We don't like fourths and fifths, so avoid them if possible.
+	static boolean canHarmonize(String note1, String note2, Random rand){
+		
 		int dist = noteDistance(note1, note2);
-		switch (dist){ // switches distance.
-			case 0: return 0;
-			case 1: case 2: return 1;
-			case 3: case 4: return 2;
-			case 5: return 3;
-			case 6: case 7: return 4;
-			case 8: case 9: return 5;
-			case 10: case 11: return 6;
-			case 12: return 7;
-			case -1: case -2: return -1;
-			case -3: case -4: return -2;
-			case -5: return -3;
-			case -6: case -7: return -4;
-			case -8: case -9: return -5;
-			case -10: case -11: return -6;
-			case -12: return -7;
-			default: throw new RuntimeException(); // throws new runtime exception.
+		if(dist == 5) return false;
+		if(dist < 0) dist = -dist;
+		dist = dist % 12;
+		
+		double r = rand.nextDouble();
+		if(dist == 5 || dist == 7){
+			if(r < 0.05) return true;
+			else return false;
 		}
-	}*/
+		
+		
+		switch(dist){
+		case 0: case 3: case 4: case 8: case 9: return true;
+		default: return false;
+		}
+	}
 }
+
+
+
+
