@@ -122,7 +122,7 @@ public class Notes {
 			+ extractNotePosition(extractNoteBase(note2)) - extractNotePosition(extractNoteBase(note1));
 	}
 	
-	static int interval(String note1, String note2){
+	/*static int interval(String note1, String note2){
 		int dist = noteDistance(note1, note2);
 		switch (dist){ // switches distance.
 			case 0: return 0;
@@ -142,5 +142,5 @@ public class Notes {
 			case -12: return -7;
 			default: throw new RuntimeException(); // throws new runtime exception.
 		}
-	}
+	}*/
 }
