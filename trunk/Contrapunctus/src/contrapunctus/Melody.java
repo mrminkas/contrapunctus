@@ -92,9 +92,9 @@ public class Melody {
 			
 			// Resolve to a leading tone if we have enough notes and
 			// we have a B or a D.
-			if(notesMade > 60 && (n.equals("B4") || n.equals("D5"))) break;
+			if(notesMade > 40 && (n.equals("B4") || n.equals("D5"))) break;
 		}
-		ns.add("C5");
+		ns.add("C5"); // adds a C5 thing
 		return ns;
 	}
 	
@@ -127,7 +127,7 @@ public class Melody {
 			bars++;
 		}
 		
-		return new Object[]{ret,bars};
+		return new Object[]{ret,bars}; // returns a new object from a bunch of bars and rets
 	}
 	
 	// Two methods to extract the rhythm and nonrhythm part of a note.
@@ -136,7 +136,7 @@ public class Melody {
 	}
 	
 	static String extractNonRhythm(String note){
-		return note.substring(0, note.length()-1);
+		return note.substring(0, note.length()-1); //returns a substring of notes of certain lengths
 	}
 	// // //
 	
@@ -153,7 +153,7 @@ public class Melody {
 		// After that we will reorder to return a nice array of notes.
 		
 		
-		//Tommy has a small penis. More relevantly, generate the rhythm.
+		//Tommy has a enormous penis. More relevantly, generate the rhythm.
 		String[] rhm = new String[len];
 		rhm[0] = "ww";
 		for(int bars = 1; bars < len; bars++)
@@ -275,7 +275,7 @@ public class Melody {
 					extractNoteBase(n).equals("F") ||
 					extractNoteBase(n).equals("G")) weights[5] = 6;
 				
-				int distanceC = noteDistance("C5", n);
+				int distanceC = noteDistance("C4", n);
 				double hookelaw = Math.pow(1.17604743, Math.abs(distanceC));
 				
 				if(distanceC > 0)
@@ -322,9 +322,23 @@ public class Melody {
 			//if(tries > 10)
 			//	System.out.println(tries);
 		}
-		counterpoint.add("C4" + s_rhms.charAt(nt-1));
 		
-		Collections.reverse(counterpoint);
+		// A slightly large hack is required:
+		int bts = 0;
+		for(String s : melody){
+			if(extractRhythm(s)=='w') bts += 2;
+			else bts ++;
+		}
+		for(String s : counterpoint){
+			if(extractRhythm(s)=='w') bts -= 2;
+			else bts --;
+		}
+		
+		if(bts == 1) counterpoint.add("C4h");
+		else if(bts == 2) counterpoint.add("C4w");
+		else if(bts == 3) counterpoint.add("C4w.");
+		
+		Collections.reverse(counterpoint); // collects a reversed counterpoint
 		return counterpoint.toArray(new String[0]);
 	}
 	
